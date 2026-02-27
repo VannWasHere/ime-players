@@ -8,12 +8,14 @@ const SERVERS = [
     label: "iMe",
     apiUrl: "https://frontend.cfx-services.net/api/servers/single/zrvmg4",
     showGho: true,
+    showLawEnforcement: true,
   },
   {
     id: "indopride",
     label: "Indopride",
     apiUrl: "https://frontend.cfx-services.net/api/servers/single/bak4pl",
     showGho: false,
+    showLawEnforcement: false,
   },
 ] as const
 
@@ -31,49 +33,44 @@ export default function App() {
   const activeServer = SERVERS.find((s) => s.id === activeTab)!
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 antialiased">
-      {/* ── Top Tab Bar ──────────────────────────────────────── */}
-      <div className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between h-14">
-          {/* Tabs */}
-          <div className="flex items-center gap-1">
-            {SERVERS.map((server) => (
-              <button
-                key={server.id}
-                onClick={() => setActiveTab(server.id)}
-                className={`
-                  relative px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200
-                  ${
-                    activeTab === server.id
-                      ? "text-foreground bg-muted"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  }
-                `}
-              >
-                {server.label}
-                {activeTab === server.id && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="px-3 py-1.5 text-sm font-medium border border-border rounded-lg bg-card hover:bg-muted transition-colors"
-          >
-            {darkMode ? "☀️ Light" : "🌙 Dark"}
-          </button>
-        </div>
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 antialiased relative">
+      {/* ── Top Bar (Theme Toggle) ──────────────────────────────────────── */}
+      <div className="absolute top-4 right-4 md:top-8 md:right-8 z-50">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="px-3 py-1.5 text-sm font-medium border border-border rounded-lg bg-card hover:bg-muted transition-colors"
+        >
+          {darkMode ? "☀️ Light" : "🌙 Dark"}
+        </button>
       </div>
 
       {/* ── Dashboard Content ────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto p-4 md:p-8">
+      <div className="max-w-7xl mx-auto p-4 md:p-8 pt-16 md:pt-8">
         <ServerDashboard
           key={activeServer.id}
           apiUrl={activeServer.apiUrl}
           showGho={activeServer.showGho}
+          showLawEnforcement={activeServer.showLawEnforcement}
+          tabsSlot={
+            <div className="flex items-center gap-2 mt-8 mb-6 border-b border-border">
+              {SERVERS.map((server) => (
+                <button
+                  key={server.id}
+                  onClick={() => setActiveTab(server.id)}
+                  className={`
+                    px-4 py-2.5 text-sm font-semibold transition-all duration-200 border-b-2 -mb-px
+                    ${
+                      activeTab === server.id
+                        ? "border-primary text-foreground"
+                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30"
+                    }
+                  `}
+                >
+                  {server.label}
+                </button>
+              ))}
+            </div>
+          }
         />
       </div>
     </div>

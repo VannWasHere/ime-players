@@ -75,10 +75,13 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
 interface ServerDashboardProps {
   apiUrl: string
   showGho?: boolean
+  showLawEnforcement?: boolean
+  tabsSlot?: React.ReactNode
 }
 
 // ─── Component ───────────────────────────────────────────────────────
-export default function ServerDashboard({ apiUrl, showGho = false }: ServerDashboardProps) {
+export default function ServerDashboard({ apiUrl, showGho = false, showLawEnforcement = true, tabsSlot }: ServerDashboardProps) {
+  const hasSidebar = showLawEnforcement || showGho
   const [data, setData] = useState<ServerData | null>(null)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -327,8 +330,11 @@ export default function ServerDashboard({ apiUrl, showGho = false }: ServerDashb
         </Card>
       </div>
 
+      {/* ── Tabs (Injected) ──────────────────────────────────── */}
+      {tabsSlot}
+
       {/* ── Main Content: Table + Sidebar ────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+      <div className={`grid grid-cols-1 ${hasSidebar ? "lg:grid-cols-[1fr_320px] gap-6" : "gap-0"}`}>
 
         {/* ── Player Table ──────────────────────────────────────── */}
         <Card className="border shadow-sm overflow-hidden">
@@ -555,45 +561,48 @@ export default function ServerDashboard({ apiUrl, showGho = false }: ServerDashb
           )}
         </Card>
 
-        {/* ── Right Sidebar: Faction Insights ───────────────────── */}
+      {/* ── Right Sidebar: Faction Insights ───────────────────── */}
+      {hasSidebar && (
         <div className="space-y-4">
 
           {/* LSPD + LSSD Count */}
-          <Card className="border shadow-sm">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-blue-400" />
-                <CardTitle className="text-base">Law Enforcement</CardTitle>
-              </div>
-              <CardDescription>LSPD & LSSD online count</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
+          {showLawEnforcement && (
+            <Card className="border shadow-sm">
+              <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-400" />
-                  <span className="text-sm font-medium">LSPD</span>
+                  <Shield className="w-5 h-5 text-blue-400" />
+                  <CardTitle className="text-base">Law Enforcement</CardTitle>
                 </div>
-                <Badge variant="secondary" className="font-mono text-sm px-3">
-                  {loading ? "—" : lspdCount}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
-                  <span className="text-sm font-medium">LSSD</span>
+                <CardDescription>LSPD & LSSD online count</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-400" />
+                    <span className="text-sm font-medium">LSPD</span>
+                  </div>
+                  <Badge variant="secondary" className="font-mono text-sm px-3">
+                    {loading ? "—" : lspdCount}
+                  </Badge>
                 </div>
-                <Badge variant="secondary" className="font-mono text-sm px-3">
-                  {loading ? "—" : lssdCount}
-                </Badge>
-              </div>
-              <div className="border-t pt-3 flex items-center justify-between">
-                <span className="text-sm font-semibold text-muted-foreground">Total</span>
-                <Badge className="font-mono text-sm px-3">
-                  {loading ? "—" : lspdCount + lssdCount}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
+                    <span className="text-sm font-medium">LSSD</span>
+                  </div>
+                  <Badge variant="secondary" className="font-mono text-sm px-3">
+                    {loading ? "—" : lssdCount}
+                  </Badge>
+                </div>
+                <div className="border-t pt-3 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-muted-foreground">Total</span>
+                  <Badge className="font-mono text-sm px-3">
+                    {loading ? "—" : lspdCount + lssdCount}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* GHO Players — only shown for iMe */}
           {showGho && (
@@ -641,7 +650,8 @@ export default function ServerDashboard({ apiUrl, showGho = false }: ServerDashb
           )}
 
         </div>
-      </div>
+      )}
     </div>
+  </div>
   )
 }

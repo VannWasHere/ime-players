@@ -32,6 +32,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  getCachedServerData,
+  isWithinMinRefreshInterval,
+  setCachedServerData,
+} from "@/lib/serverDataCache"
 
 // ─── Types ───────────────────────────────────────────────────────────
 interface Player {
@@ -99,13 +104,40 @@ export default function ServerDashboard({ apiUrl, showGho = false, showLawEnforc
   // ─── Fetch ───────────────────────────────────────────────────────
   const fetchServerInfo = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true)
+
+    // Serve from cache if user is refreshing too fast (within min interval)
+    if (isManual && isWithinMinRefreshInterval(apiUrl)) {
+      const cached = getCachedServerData(apiUrl)
+      if (cached?.data) {
+        setData(cached.data as ServerData)
+        setLastFetched(cached.fetchedAt)
+        setLoading(false)
+        setRefreshing(false)
+        return
+      }
+    }
+
+    // On initial load, use cache if valid to avoid unnecessary fetch
+    if (!isManual) {
+      const cached = getCachedServerData(apiUrl)
+      if (cached?.data) {
+        setData(cached.data as ServerData)
+        setLastFetched(cached.fetchedAt)
+        setLoading(false)
+        setRefreshing(false)
+        return
+      }
+    }
+
     try {
       const response = await fetch(apiUrl)
       if (!response.ok) throw new Error("Failed to fetch server data")
       const json = await response.json()
-      setData(json.Data)
+      const serverData = json.Data
+      setData(serverData)
       setError(null)
       setLastFetched(new Date())
+      setCachedServerData(apiUrl, serverData)
     } catch (err: any) {
       setError(err.message)
     } finally {

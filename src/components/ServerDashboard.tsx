@@ -77,10 +77,11 @@ interface ServerDashboardProps {
   showGho?: boolean
   showLawEnforcement?: boolean
   tabsSlot?: React.ReactNode
+  titleOverride?: string
 }
 
 // ─── Component ───────────────────────────────────────────────────────
-export default function ServerDashboard({ apiUrl, showGho = false, showLawEnforcement = true, tabsSlot }: ServerDashboardProps) {
+export default function ServerDashboard({ apiUrl, showGho = false, showLawEnforcement = true, tabsSlot, titleOverride }: ServerDashboardProps) {
   const hasSidebar = showLawEnforcement || showGho
   const [data, setData] = useState<ServerData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -226,7 +227,7 @@ export default function ServerDashboard({ apiUrl, showGho = false, showLawEnforc
           <Server className="w-8 h-8 md:w-10 md:h-10 text-primary" />
           <div>
             <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight">
-              {data ? cleanHostname(data.hostname) : "Loading..."}
+              {titleOverride ?? (data ? cleanHostname(data.hostname) : "Loading...")}
             </h1>
             <p className="text-sm md:text-base text-muted-foreground flex items-center gap-2 mt-1">
               <span className="relative flex h-3 w-3">

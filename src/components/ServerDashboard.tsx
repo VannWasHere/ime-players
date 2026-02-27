@@ -651,7 +651,7 @@ export default function ServerDashboard({ apiUrl, showGho = false, showLawEnforc
 
         </div>
       )}
+      </div>
     </div>
-  </div>
   )
 }

@@ -33,7 +33,7 @@ export default function App() {
   const activeServer = SERVERS.find((s) => s.id === activeTab)!
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 antialiased relative">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 antialiased relative flex flex-col">
       {/* ── Top Bar (Theme Toggle) ──────────────────────────────────────── */}
       <div className="absolute top-4 right-4 md:top-8 md:right-8 z-50">
         <button
@@ -45,7 +45,7 @@ export default function App() {
       </div>
 
       {/* ── Dashboard Content ────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto p-4 md:p-8 pt-16 md:pt-8">
+      <div className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 pt-16 md:pt-8">
         <ServerDashboard
           key={activeServer.id}
           apiUrl={activeServer.apiUrl}
@@ -76,6 +76,11 @@ export default function App() {
           }
         />
       </div>
+
+      {/* ── Footer ──────────────────────────────────────────────────────── */}
+      <footer className="py-4 text-center text-sm text-muted-foreground border-t border-border">
+        © {new Date().getFullYear()} Vann · v1.0.0
+      </footer>
     </div>
   )
 }

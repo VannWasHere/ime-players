@@ -598,6 +598,51 @@ export default function ServerDashboard({ apiUrl, showGho = false, showLawEnforc
       {hasSidebar && (
         <div className="space-y-4">
 
+          {/* GHO Members — on top */}
+          {showGho && (
+            <Card className="border shadow-sm">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <img src={ghoLogo} alt="GHO" className="w-6 h-6 rounded" />
+                    <CardTitle className="text-base">GHO Members</CardTitle>
+                  </div>
+                  <Badge variant="outline" className="font-mono text-xs">
+                    {loading ? "—" : ghoPlayers.length}
+                  </Badge>
+                </div>
+                <CardDescription>Players with GHO tag online</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <p className="text-sm text-muted-foreground">Loading...</p>
+                ) : ghoPlayers.length > 0 ? (
+                  <div className="space-y-1.5 max-h-[400px] overflow-y-auto pr-1">
+                    {ghoPlayers.map((p) => (
+                      <div
+                        key={p.id}
+                        className="flex items-center justify-between rounded-md px-2.5 py-1.5 text-sm hover:bg-muted/50 transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
+                          <span className="font-medium truncate">{p.name}</span>
+                        </div>
+                        <span className={`font-mono text-xs shrink-0 ml-2 ${getPingColor(p.ping)}`}>
+                          {p.ping}ms
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <img src={ghoLogo} alt="GHO" className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                    <p className="text-sm">No GHO members online</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {/* LSPD + LSSD Count */}
           {showLawEnforcement && (
             <Card className="border shadow-sm">
@@ -633,51 +678,6 @@ export default function ServerDashboard({ apiUrl, showGho = false, showLawEnforc
                     {loading ? "—" : lspdCount + lssdCount}
                   </Badge>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* GHO Players — only shown for iMe */}
-          {showGho && (
-            <Card className="border shadow-sm">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img src={ghoLogo} alt="GHO" className="w-6 h-6 rounded" />
-                    <CardTitle className="text-base">GHO Members</CardTitle>
-                  </div>
-                  <Badge variant="outline" className="font-mono text-xs">
-                    {loading ? "—" : ghoPlayers.length}
-                  </Badge>
-                </div>
-                <CardDescription>Players with GHO tag online</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <p className="text-sm text-muted-foreground">Loading...</p>
-                ) : ghoPlayers.length > 0 ? (
-                  <div className="space-y-1.5 max-h-[400px] overflow-y-auto pr-1">
-                    {ghoPlayers.map((p) => (
-                      <div
-                        key={p.id}
-                        className="flex items-center justify-between rounded-md px-2.5 py-1.5 text-sm hover:bg-muted/50 transition-colors group"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
-                          <span className="font-medium truncate">{p.name}</span>
-                        </div>
-                        <span className={`font-mono text-xs shrink-0 ml-2 ${getPingColor(p.ping)}`}>
-                          {p.ping}ms
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-muted-foreground">
-                    <img src={ghoLogo} alt="GHO" className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                    <p className="text-sm">No GHO members online</p>
-                  </div>
-                )}
               </CardContent>
             </Card>
           )}
